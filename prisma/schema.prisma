@@ -8,7 +8,34 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  password     String?
+
+  // Relationship
+  vendorId     Int?     // Optional — user may or may not be assigned
+  vendor       Vendor?  @relation("VendorUsers", fields: [vendorId], references: [id])
+
+  // ... other user fields
+}
+
+
+model Vendor {
+  id           Int      @id @default(autoincrement())
+  vendorCode   String   @unique @db.Char(6) // e.g. "X92B3C"
+  shopName     String
+  address      String
+  phoneNumber  String
+  service      String
+  price        Float
+  description  String?
+  createdAt    DateTime @default(now())
+
+  // Optional: if you plan to add lat/lng support later (PostGIS can be used)
+  // latitude     Float?
+  // longitude    Float?
+
+  // Relationship
+  users        User[]   @relation("VendorUsers")
 }

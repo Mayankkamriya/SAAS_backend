@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import userRoutes from './routes/user.routes';
+import venderRoutes from './routes/vendor.routes';
 
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/api/users', userRoutes);
+app.use("/api/vendors", venderRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
