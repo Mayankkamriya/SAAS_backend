@@ -8,34 +8,55 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  name         String
-  email        String   @unique
-  password     String?
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  password String?
 
   // Relationship
-  vendorId     Int?     // Optional — user may or may not be assigned
-  vendor       Vendor?  @relation("VendorUsers", fields: [vendorId], references: [id])
+  vendorId Int? // Optional — user may or may not be assigned
+  vendor   Vendor? @relation("VendorUsers", fields: [vendorId], references: [id])
+
+  appointments Appointment[] // User's booked appointments
 
   // ... other user fields
 }
 
-
 model Vendor {
-  id           Int      @id @default(autoincrement())
-  vendorCode   String   @unique @db.Char(6) // e.g. "X92B3C"
-  shopName     String
-  address      String
-  phoneNumber  String
-  service      String
-  price        Float
-  description  String?
-  createdAt    DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  vendorCode  String   @unique @db.Char(6)
+  shopName    String
+  address     String
+  phoneNumber String
+  description String?
+  createdAt   DateTime @default(now())
 
-  // Optional: if you plan to add lat/lng support later (PostGIS can be used)
-  // latitude     Float?
-  // longitude    Float?
+  price            Float?
+  appointmentSlots DateTime[] // Available slots
+  services         Service[] // Linked services
 
-  // Relationship
-  users        User[]   @relation("VendorUsers")
+  users        User[]        @relation("VendorUsers")
+  appointments Appointment[] // Vendor's booked appointments
+}
+
+model Service {
+  id       Int    @id @default(autoincrement())
+  name     String
+  price    Float
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+  vendorId Int
+}
+
+model Appointment {
+  id     Int      @id @default(autoincrement())
+  slot   DateTime
+  status String   @default("booked")
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+  vendorId Int
+
+  createdAt DateTime @default(now())
 }
