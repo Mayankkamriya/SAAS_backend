@@ -13,14 +13,22 @@ model User {
   email    String  @unique
   password String?
 
-  // Relationship
-  vendorId Int? // Optional — user may or may not be assigned
+  role     Role    @default(USER)  // <--- Add this line
+
+  vendorId Int?
   vendor   Vendor? @relation("VendorUsers", fields: [vendorId], references: [id])
 
-  appointments Appointment[] // User's booked appointments
+  appointments Appointment[]
 
-  // ... other user fields
 }
+
+// Enum for roles
+enum Role {
+  USER
+  VENDOR
+  ADMIN
+}
+
 
 model Vendor {
   id          Int      @id @default(autoincrement())
